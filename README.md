@@ -14,4 +14,4 @@ Completed:
 * [] Optional: Using locale-specific currency and currency thousands separators.
 
 
-![Video Walkthrough](name of your gif file.gif)
+[Video Walkthrough](prework-demo.gif)
