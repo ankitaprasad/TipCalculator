@@ -24,20 +24,16 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         let topController = viewController?.topViewController as? TipCalculatorViewController
         
         var userDefaults = NSUserDefaults.standardUserDefaults()
-        if let exitTimestamp = userDefaults.objectForKey("exitTimestamp") as? String {
-            let formatter = NSDateFormatter()
-            var exitDate = formatter.dateFromString(exitTimestamp)
-            if (exitDate != nil) {
-                var presentDate = NSDate()
-                var difference = presentDate.timeIntervalSinceDate(exitDate!)
-                if (difference > 600){
-                    topController?.maintainState = true
-                }
+        if let exitTimestamp = userDefaults.objectForKey("exitTimestamp") as? NSDate {
+            var presentDate = NSDate()
+            var difference = presentDate.timeIntervalSinceDate(exitTimestamp)
+            if (difference < 600){
+                topController?.maintainState = true
+                return true
             }
+
         }
-        else {
-            topController?.maintainState = false
-        }
+        topController?.maintainState = false
         return true
     }
 
@@ -60,11 +56,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         
         // Set the time of exit in user defaults.
         var date = NSDate()
-        let formatter = NSDateFormatter()
-        // formatter.dateStyle = .FullStyle
-        var dateString = formatter.stringFromDate(date)
-        println(dateString)
-        userDefaults.setObject(dateString, forKey: "exitTimestamp")
+        userDefaults.setObject(date, forKey: "exitTimestamp")
         
         userDefaults.synchronize()
     }

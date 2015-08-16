@@ -48,7 +48,7 @@ class TipCalculatorViewController: UIViewController {
     @IBOutlet var totalText: UILabel!
     
     @IBAction func onTap(sender: AnyObject) {
-        view.endEditing(true)
+        // view.endEditing(true)
         updateValues()
     }
     
