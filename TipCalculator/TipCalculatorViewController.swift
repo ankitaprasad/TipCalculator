@@ -20,8 +20,8 @@ class TipCalculatorViewController: UIViewController {
         
         // Get old bill amount if maintainState is set to true
         if(maintainState != nil && maintainState == true) {
-        let userDefaults = NSUserDefaults.standardUserDefaults()
-            if let lastBillValue = userDefaults.objectForKey("lastBillState") as? String {
+        let userDefaults = UserDefaults.standard
+            if let lastBillValue = userDefaults.object(forKey: "lastBillState") as? String {
                 billAmount.text = lastBillValue
             }
         }
@@ -47,20 +47,20 @@ class TipCalculatorViewController: UIViewController {
     
     @IBOutlet var totalText: UILabel!
     
-    @IBAction func onTap(sender: AnyObject) {
+    @IBAction func onTap(_ sender: AnyObject) {
         // view.endEditing(true)
         updateValues()
     }
     
-    @IBAction func billEditChanged(sender: AnyObject) {
+    @IBAction func billEditChanged(_ sender: AnyObject) {
         updateValues()
     }
 
     // Computed property for the default tip stored in UserIndex
     var defaultTipIndex :Int {
         get {
-            var userDeafults = NSUserDefaults.standardUserDefaults()
-            if let defaultTipIsNotNil = userDeafults.objectForKey("tipIndex") as? Int{
+            let userDeafults = UserDefaults.standard
+            if let defaultTipIsNotNil = userDeafults.object(forKey: "tipIndex") as? Int{
                 return defaultTipIsNotNil
             }
             else {
@@ -72,8 +72,8 @@ class TipCalculatorViewController: UIViewController {
     // Computed property for the default theme stored in userIndex
     var defaultTiptheme :Bool{
         get{
-            var userDeafults = NSUserDefaults.standardUserDefaults()
-            if let defaultTipThemeIsNotNil = userDeafults.objectForKey("tipThemeIsDark") as? Bool{
+            let userDeafults = UserDefaults.standard
+            if let defaultTipThemeIsNotNil = userDeafults.object(forKey: "tipThemeIsDark") as? Bool{
                 return defaultTipThemeIsNotNil
             }
             else {
@@ -82,22 +82,32 @@ class TipCalculatorViewController: UIViewController {
         }
     }
     
-
     
     func updateValues() {
-        var billValue : Double = (billAmount.text as NSString).doubleValue
-        let tipArray = [0.1, 0.15, 0.2]
-        var tipValue = billValue * tipArray[tipPercentage.selectedSegmentIndex]
-        var totalValue = billValue + tipValue
-        tipLabel.text = String(format:"$%.2f", tipValue)
-        totalAmountLabel.text = String(format:"$%.2f", totalValue)
+        let formatter = NumberFormatter()
+        formatter.locale = Locale.autoupdatingCurrent
+
         
+        var billValue = formatter.number(from: billAmount.text!)?.doubleValue
+        if(billValue == nil)
+        {
+            billValue = 0.0
+        }
+       // var billValue : Double = (billAmount.text as NSString ).doubleValue
+        let tipArray = [0.1, 0.15, 0.2]
+        let tipValue = billValue! * tipArray[tipPercentage.selectedSegmentIndex]
+        let totalValue = billValue! + tipValue
+        
+        formatter.numberStyle = NumberFormatter.Style.currency
+        formatter.usesGroupingSeparator = true
+        tipLabel.text = formatter.string(from: tipValue as NSNumber)
+        totalAmountLabel.text = formatter.string(from: totalValue as NSNumber)
     }
 
     // In a storyboard-based application, you will often want to do a little preparation before navigation
-    override func prepareForSegue(segue: UIStoryboardSegue, sender: AnyObject?) {
+    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
         if (segue.identifier == "settingsSegue") {
-            let destinationVC = segue.destinationViewController as? SettingsViewController
+            let destinationVC = segue.destination as? SettingsViewController
             
             if (destinationVC != nil){
                 destinationVC?.defaultTipSelectionIndex = defaultTipIndex
@@ -108,7 +118,7 @@ class TipCalculatorViewController: UIViewController {
     }
     
     // Override viewWillAppear to update tip selection and corresponding values.
-    override func viewWillAppear(animated: Bool) {
+    override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(true)
         tipPercentage.selectedSegmentIndex = defaultTipIndex
         updateValues()

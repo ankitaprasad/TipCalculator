@@ -19,7 +19,7 @@ class SettingsViewController: UIViewController {
         defaultText.text = textLabel
         themeText.text = themeLabel
         defaultTipPercentage.selectedSegmentIndex = defaultTipSelectionIndex
-        themeSwitch.on = isThemeDark
+        themeSwitch.isOn = isThemeDark
     }
 
     override func didReceiveMemoryWarning() {
@@ -35,19 +35,19 @@ class SettingsViewController: UIViewController {
     
     @IBOutlet var defaultTipPercentage: UISegmentedControl!
     
-    @IBAction func onSelectionChanged(sender: UISegmentedControl) {
+    @IBAction func onSelectionChanged(_ sender: UISegmentedControl) {
         
-        var selectedIndex = sender.selectedSegmentIndex
-        var defaults : NSUserDefaults = NSUserDefaults.standardUserDefaults()
-        defaults.setInteger(selectedIndex, forKey: "tipIndex")
+        let selectedIndex = sender.selectedSegmentIndex
+        let defaults : UserDefaults = UserDefaults.standard
+        defaults.set(selectedIndex, forKey: "tipIndex")
         defaults.synchronize()
     }
 
     
-    @IBAction func onThemeChanged(sender: UISwitch) {
-        var darktheme = sender.on
-        var defaults : NSUserDefaults = NSUserDefaults.standardUserDefaults()
-        defaults.setBool(darktheme, forKey: "tipThemeIsDark")
+    @IBAction func onThemeChanged(_ sender: UISwitch) {
+        let darktheme = sender.isOn
+        let defaults : UserDefaults = UserDefaults.standard
+        defaults.set(darktheme, forKey: "tipThemeIsDark")
         defaults.synchronize()
     }
     
